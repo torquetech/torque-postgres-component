@@ -4,8 +4,6 @@
 
 """DOCSTRING"""
 
-import functools
-
 from collections import namedtuple
 
 from torque import environment
@@ -31,7 +29,7 @@ class V1ImplementationInterface(v1.bond.Interface):
     def auth(self, database: str, user: str) -> v1.utils.Future[Authorization]:
         """DOCSTRING"""
 
-    def service(self) -> v1.utils.Future[Service] | Service:
+    def service(self) -> v1.utils.Future[Service]:
         """DOCSTRING"""
 
 
@@ -41,7 +39,7 @@ class V1SourceInterface(v1.component.SourceInterface):
     def auth(self, database: str, user: str) -> v1.utils.Future[Authorization]:
         """DOCSTRING"""
 
-    def service(self) -> v1.utils.Future[Service] | Service:
+    def service(self) -> v1.utils.Future[Service]:
         """DOCSTRING"""
 
 
@@ -51,7 +49,7 @@ class V1DestinationInterface(v1.component.DestinationInterface):
     def add(self,
             name: str,
             auth: v1.utils.Future[Authorization],
-            service: v1.utils.Future[Service] | Service):
+            service: v1.utils.Future[Service]):
         """DOCSTRING"""
 
 
@@ -120,10 +118,7 @@ class V1EnvironmentLink(environment.V1BaseLink):
 
         service = self.interfaces.src.service()
 
-        self.interfaces.dst.add(self._name(),
-                                v1.utils.Future(functools.partial(self._resolve_uri,
-                                                                  auth,
-                                                                  service)))
+        self.interfaces.dst.add(self._name(), v1.utils.Future(self._resolve_uri, auth, service))
 
 
 class V1ServiceLink(v1.link.Link):
